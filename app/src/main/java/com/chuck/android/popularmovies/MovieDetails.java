@@ -8,6 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chuck.android.popularmovies.models.Movie;
+import com.chuck.android.popularmovies.models.MovieReview;
+import com.chuck.android.popularmovies.models.MovieReviewList;
 import com.chuck.android.popularmovies.models.MovieTrailer;
 import com.chuck.android.popularmovies.models.MovieTrailerList;
 import com.chuck.android.popularmovies.rest.MovieApi;
@@ -86,12 +88,30 @@ public class MovieDetails extends AppCompatActivity {
                     Linkify.addLinks(movieTrailer, Linkify.WEB_URLS);
                 }
             }
-
             @Override
             public void onFailure(Call<MovieTrailerList> call, Throwable t) {
 
             }
         });
+            Call<MovieReviewList> callReviewList = movieService.getMovieReviews(id,apiKey);
+
+        callReviewList.enqueue(new Callback<MovieReviewList>() {
+                @Override
+                public void onResponse(Call<MovieReviewList> call, Response<MovieReviewList> response) {
+                    List<MovieReview> movieReviewList = response.body().getResults();
+                    TextView movieReview = findViewById(R.id.movieReview);
+                    for (MovieReview review: movieReviewList )
+                    {
+                        movieReview.append(review.getContent() + "\n");
+                    }
+                }
+            @Override
+            public void onFailure(Call<MovieReviewList> call, Throwable t) {
+
+            }
+        });
+
+
 
     }
 }
