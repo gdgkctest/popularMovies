@@ -3,6 +3,8 @@ package com.chuck.android.popularmovies.rest;
 
 import com.chuck.android.popularmovies.models.Movie;
 import com.chuck.android.popularmovies.models.MovieList;
+import com.chuck.android.popularmovies.models.MovieReview;
+import com.chuck.android.popularmovies.models.MovieReviewList;
 import com.chuck.android.popularmovies.models.MovieTrailerList;
 
 import retrofit2.Call;
@@ -24,4 +26,6 @@ public interface MovieInterface {
     Call<Movie> getMovieDetails(@Path("id") int id, @Query("api_key") String apiKey);
     @GET("{id}/videos")
     Call<MovieTrailerList> getMovieTrailers(@Path("id") int id, @Query("api_key") String apiKey);
+    @GET("{id}/reviews")
+    Call<MovieReviewList> getMovieReviews(@Path("id") int id, @Query("api_key") String apiKey);
 }
