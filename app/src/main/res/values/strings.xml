@@ -1,8 +1,9 @@
 <resources>
-    <string name="app_name">Popular Movies Part One</string>
+    <string name="app_name">Popular Movies Part Two</string>
     <string name="attribution">This product uses the TMDb API but is not endorsed or certified by TMDb</string>
     <string name="action_sortBy">Sort By:</string>
     <string name="action_popular">Popular</string>
     <string name="action_topRated">Top Rated</string>
     <string name="action_favorites">Favorites</string>
+    <string name="ck_favorites_text">Add/Remove from Favorites</string>
 </resources>

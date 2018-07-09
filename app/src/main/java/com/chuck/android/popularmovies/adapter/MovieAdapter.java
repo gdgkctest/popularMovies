@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import com.chuck.android.popularmovies.MovieDetails;
 
 import com.chuck.android.popularmovies.R;
+import com.chuck.android.popularmovies.models.MinMovie;
 import com.chuck.android.popularmovies.models.Movie;
 import com.squareup.picasso.Picasso;
 
@@ -22,7 +23,7 @@ import java.util.List;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
 
-    private List<Movie> movies;
+    private List<MinMovie> movies;
     private int rowLayout;
     private Context context;
 
@@ -52,11 +53,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
             Intent myIntent = new Intent(context, MovieDetails.class);
             myIntent.putExtra("EXTRA_MOVIE_ID", movies.get(position).getId() );
             context.startActivity(myIntent);
-
         }
     }
-    public MovieAdapter(List<Movie> movies, int rowLayout, Context context) {
-        this.movies = movies;
+    public MovieAdapter(int rowLayout, Context context) {
         this.rowLayout = rowLayout;
         this.context = context;
     }
@@ -67,24 +66,36 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         return new MovieViewHolder(parent.getContext(),view);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull MovieViewHolder holder, int position) {
         //Populate the Individual Items in the List
-        String movieTitle = movies.get(position).getTitle();
-        String PosterPath = "http://image.tmdb.org/t/p/w342" + movies.get(position).getPosterPath();
-        //Place the Movie Poster into the Imageview using Picasso since poster image is from web
-        Picasso.get()
-                .load(PosterPath)
-                .placeholder(R.drawable.ic_placeholder)
-                .error(R.drawable.ic_image_error)
-                .into(holder.moviePoster);
-        //Add ContentDescription for Accessibility
-        holder.moviePoster.setContentDescription(movieTitle);
+        if (movies != null)
+        {
+            String movieTitle = movies.get(position).getTitle();
+            String PosterPath = "http://image.tmdb.org/t/p/w342" + movies.get(position).getPosterPath();
+            //Place the Movie Poster into the Imageview using Picasso since poster image is from web
+            Picasso.get()
+                    .load(PosterPath)
+                    .placeholder(R.drawable.ic_placeholder)
+                    .error(R.drawable.ic_image_error)
+                    .into(holder.moviePoster);
+            //Add ContentDescription for Accessibility
+            holder.moviePoster.setContentDescription(movieTitle);
+        }
+    }
+
+    public void setMovies(List<MinMovie> currentMovies){
+        this.movies = currentMovies;
+        notifyDataSetChanged();
     }
 
     @Override
     public int getItemCount() {
-        return movies.size();
+        if (movies != null)
+            return movies.size();
+        else
+            return 0;
     }
 
 

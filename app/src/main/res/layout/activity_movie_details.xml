@@ -39,6 +39,11 @@
                     android:drawableLeft="@drawable/star"
                     android:textColor="#000000"
                     android:textSize="18sp"/>
+                <CheckBox
+                    android:id="@+id/ck_favorites"
+                    android:text="@string/ck_favorites_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
 
             </LinearLayout>
         </LinearLayout>
@@ -49,22 +54,20 @@
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:textColor="#000000"/>
-        <TextView
-            android:id="@+id/movieTrailer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"/>
-        <TextView
-            android:id="@+id/movieReviewLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:text="Movie Reviews"
-            android:textColor="@color/colorAccent"/>
-        <TextView
-            android:id="@+id/movieReview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"/>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_trailerList"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:gravity="top">
+        </android.support.v7.widget.RecyclerView>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_reviewList"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:gravity="top">
+        </android.support.v7.widget.RecyclerView>
+
     </LinearLayout>
 </ScrollView>
