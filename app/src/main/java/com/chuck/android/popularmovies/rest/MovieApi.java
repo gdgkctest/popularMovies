@@ -5,7 +5,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MovieApi {
     //Defines the API for MovieDB using Retrofit
-    public static Retrofit getClient(){
+    public static Retrofit getClient() {
+        //Base URL for MovieDB
         final String Base_URL = "https://api.themoviedb.org/3/movie/";
 
         return new Retrofit.Builder()

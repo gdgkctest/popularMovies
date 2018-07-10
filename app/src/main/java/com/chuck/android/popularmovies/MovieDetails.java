@@ -2,13 +2,11 @@ package com.chuck.android.popularmovies;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.text.util.Linkify;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
@@ -17,7 +15,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.chuck.android.popularmovies.adapter.MovieAdapter;
 import com.chuck.android.popularmovies.adapter.MovieReviewAdapter;
 import com.chuck.android.popularmovies.adapter.MovieTrailerAdapter;
 import com.chuck.android.popularmovies.models.MinMovie;
@@ -42,13 +39,12 @@ public class MovieDetails extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private DetailsViewModel mViewModel;
     protected Movie movieDetails;
-     CheckBox checkbox;
-     TextView movieTitle;
-     TextView movieDate ;
-     TextView movieRating ;
-     TextView movieDescription ;
-     ImageView moviePoster;
-    private String title;
+    CheckBox checkbox;
+    TextView movieTitle;
+    TextView movieDate;
+    TextView movieRating;
+    TextView movieDescription;
+    ImageView moviePoster;
     private RecyclerView rv_Reviews;
     private RecyclerView rv_Trailers;
 
@@ -60,46 +56,38 @@ public class MovieDetails extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
         //Get Passed Extra ID from intent
-        int id = getIntent().getIntExtra("EXTRA_MOVIE_ID",0);
+        int id = getIntent().getIntExtra("EXTRA_MOVIE_ID", 0);
         //Define Views
         movieTitle = findViewById(R.id.movieTitle);
-         movieDate = findViewById(R.id.movieDate);
-         movieRating = findViewById(R.id.movieRating);
-         movieDescription = findViewById(R.id.movieDescription);
-         moviePoster = findViewById(R.id.movieDetailsPoster);
+        movieDate = findViewById(R.id.movieDate);
+        movieRating = findViewById(R.id.movieRating);
+        movieDescription = findViewById(R.id.movieDescription);
+        moviePoster = findViewById(R.id.movieDetailsPoster);
         checkbox = findViewById(R.id.ck_favorites);
 
         retrieveMovieDetails(id);
         initViewModel(id);
         initRecylerViews();
 
-        checkbox.setOnClickListener(new View.OnClickListener()
-        {
+        checkbox.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
-                if (checkbox.isChecked())
-                {
-                    Toast.makeText(getApplicationContext(),"Item Added",Toast.LENGTH_SHORT).show();
-                    mViewModel.addMovie(movieDetails.getId(),movieDetails.getTitle(),movieDetails.getPosterPath());
-
-                }
-                else
-                {
-                    Toast.makeText(getApplicationContext(),"Item Deleted",Toast.LENGTH_SHORT).show();
+            public void onClick(View v) {
+                if (checkbox.isChecked()) {
+                    Toast.makeText(getApplicationContext(), "Movie Added To favorites", Toast.LENGTH_SHORT).show();
+                    mViewModel.addMovie(movieDetails.getId(), movieDetails.getTitle(), movieDetails.getPosterPath());
+                } else {
+                    Toast.makeText(getApplicationContext(), "Movie Removed From Favorites", Toast.LENGTH_SHORT).show();
                     mViewModel.deleteMovie();
-
                 }
             }
         });
-
     }
 
     private void initRecylerViews() {
         rv_Reviews = findViewById(R.id.rv_reviewList);
         rv_Trailers = findViewById(R.id.rv_trailerList);
-        rv_Reviews.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        rv_Trailers.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        rv_Reviews.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayout.HORIZONTAL, false));
+        rv_Trailers.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayout.HORIZONTAL, false));
         reviewAdapter = new MovieReviewAdapter();
         trailerAdapter = new MovieTrailerAdapter();
         rv_Reviews.setAdapter(reviewAdapter);
@@ -126,7 +114,7 @@ public class MovieDetails extends AppCompatActivity {
 
         String apiKey = getString(R.string.API_key);
         //Populate Retrofit API with parameters
-        Call<Movie> call = movieService.getMovieDetails(id,apiKey);
+        Call<Movie> call = movieService.getMovieDetails(id, apiKey);
 
         call.enqueue(new Callback<Movie>() {
             @Override
@@ -154,7 +142,7 @@ public class MovieDetails extends AppCompatActivity {
                 Log.e(TAG, t.toString());
             }
         });
-        Call<MovieTrailerList> callTrailerList = movieService.getMovieTrailers(id,apiKey);
+        Call<MovieTrailerList> callTrailerList = movieService.getMovieTrailers(id, apiKey);
 
         callTrailerList.enqueue(new Callback<MovieTrailerList>() {
             @Override
@@ -162,12 +150,13 @@ public class MovieDetails extends AppCompatActivity {
                 List<MovieTrailer> movieTrailerList = response.body().getResults();
                 trailerAdapter.setMovies(movieTrailerList);
             }
+
             @Override
             public void onFailure(Call<MovieTrailerList> call, Throwable t) {
 
             }
         });
-        Call<MovieReviewList> callReviewList = movieService.getMovieReviews(id,apiKey);
+        Call<MovieReviewList> callReviewList = movieService.getMovieReviews(id, apiKey);
 
         callReviewList.enqueue(new Callback<MovieReviewList>() {
             @Override
@@ -175,13 +164,12 @@ public class MovieDetails extends AppCompatActivity {
                 List<MovieReview> movieReviewList = response.body().getResults();
                 reviewAdapter.setMovies(movieReviewList);
             }
+
             @Override
             public void onFailure(Call<MovieReviewList> call, Throwable t) {
 
             }
         });
-
-
 
 
     }

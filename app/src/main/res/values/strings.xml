@@ -6,4 +6,6 @@
     <string name="action_topRated">Top Rated</string>
     <string name="action_favorites">Favorites</string>
     <string name="ck_favorites_text">Add/Remove from Favorites</string>
+    <string name="movie_trailers">Movie Trailers</string>
+    <string name="review_label">Reviews</string>
 </resources>

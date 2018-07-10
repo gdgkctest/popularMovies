@@ -3,7 +3,6 @@ package com.chuck.android.popularmovies.rest;
 
 import com.chuck.android.popularmovies.models.Movie;
 import com.chuck.android.popularmovies.models.MovieList;
-import com.chuck.android.popularmovies.models.MovieReview;
 import com.chuck.android.popularmovies.models.MovieReviewList;
 import com.chuck.android.popularmovies.models.MovieTrailerList;
 
@@ -18,14 +17,20 @@ public interface MovieInterface {
     //Get Popular Movies
     @GET("popular")
     Call<MovieList> getPopularMovies(@Query("api_key") String apiKey);
+
     //Get Top Rated Movies
     @GET("top_rated")
     Call<MovieList> getTopRatedMovies(@Query("api_key") String apiKey);
+
     //Get Movie Details
     @GET("{id}")
     Call<Movie> getMovieDetails(@Path("id") int id, @Query("api_key") String apiKey);
+
+    //Get Trailers
     @GET("{id}/videos")
     Call<MovieTrailerList> getMovieTrailers(@Path("id") int id, @Query("api_key") String apiKey);
+
+    //Get Reviews
     @GET("{id}/reviews")
     Call<MovieReviewList> getMovieReviews(@Path("id") int id, @Query("api_key") String apiKey);
 }

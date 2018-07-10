@@ -11,8 +11,10 @@ import com.chuck.android.popularmovies.repo.AppRepository;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+//Defines the ViewModel for MovieDetails
 public class DetailsViewModel extends AndroidViewModel {
-    public MutableLiveData<MinMovie> mLiveMovie =  new MutableLiveData<>();
+    //Current Movie Object
+    public MutableLiveData<MinMovie> mLiveMovie = new MutableLiveData<>();
     private AppRepository mRepository;
     private Executor executor = Executors.newSingleThreadExecutor();
 
@@ -21,7 +23,9 @@ public class DetailsViewModel extends AndroidViewModel {
         super(application);
         mRepository = AppRepository.getInstance(application.getApplicationContext());
     }
+
     public void loadData(final int movieId) {
+        //Retrieves the current movie from DB and loads into a mLiveMovie
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -31,11 +35,14 @@ public class DetailsViewModel extends AndroidViewModel {
         });
 
     }
+
     public void deleteMovie() {
         mRepository.deleteFavoriteMovie(mLiveMovie.getValue());
     }
-    public void addMovie(int id, String title,String posterPath){
-        MinMovie newMovie = new MinMovie(id,title,posterPath);
+
+    public void addMovie(int id, String title, String posterPath) {
+        //creates a new favorite in DB
+        MinMovie newMovie = new MinMovie(id, title, posterPath);
         mRepository.insertFavoriteMovie(newMovie);
     }
 

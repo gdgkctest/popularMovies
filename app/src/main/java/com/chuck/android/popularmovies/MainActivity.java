@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
     private MovieAdapter adapter;
     StaggeredGridLayoutManager movieGridLayoutManger;
     public static final String BUNDLE_RV_POSITION = "Bundle_RV_POS_KEY";
-    public static final String BUNDLE_RV_LISTTYPE = "Bundle_RV_LT_KEY";
     private String selectedList;
     private List<MinMovie> currentMoviesList = new ArrayList<>();
     private List<MinMovie> favoriteMovieList;
@@ -56,8 +55,7 @@ public class MainActivity extends AppCompatActivity {
         initViewModel();
         Stetho.initializeWithDefaults(this);
 
-        if(savedInstanceState != null)
-        {
+        if (savedInstanceState != null) {
             Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RV_POSITION);
             recyclerView.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
         }
@@ -66,17 +64,20 @@ public class MainActivity extends AppCompatActivity {
             movieListSelect("Popular Movies");
 
     }
+
     @Override
-    public void onSaveInstanceState(Bundle outState){
+    public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(BUNDLE_RV_POSITION,recyclerView.getLayoutManager().onSaveInstanceState());
+        outState.putParcelable(BUNDLE_RV_POSITION, recyclerView.getLayoutManager().onSaveInstanceState());
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -87,17 +88,16 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_popular) {
             selectedList = "Popular Movies";
-        }
-        else if (id == R.id.action_topRated) {
+        } else if (id == R.id.action_topRated) {
             selectedList = "Top Rated Movies";
-        }
-        else if (id == R.id.action_favorites) {
+        } else if (id == R.id.action_favorites) {
             selectedList = "Favorites";
         }
         movieListSelect(selectedList);
         return super.onOptionsItemSelected(item);
     }
-    public void movieListSelect(final String movieList){
+
+    public void movieListSelect(final String movieList) {
         //Defines the Parameters for the API call to movieDB
         MovieInterface movieService = MovieApi.getClient().create(MovieInterface.class);
         //Store API Key
@@ -110,8 +110,7 @@ public class MainActivity extends AppCompatActivity {
             if ("Favorites".equals(movieList)) {
                 recyclerView.scrollToPosition(0);
                 adapter.setMovies(favoriteMovieList);
-            }
-            else {
+            } else {
                 //Choose a retrofit call based on sort option
                 Call<MovieList> call;
                 if ("Popular Movies".equals(movieList))
@@ -138,20 +137,21 @@ public class MainActivity extends AppCompatActivity {
                         //If not log the Error
                         Log.e(TAG, t.toString());
                     }
-
                 });
                 if ("Top Rated Movies".equals(movieList))
-                    Log.i(TAG,"Stop Here");
+                    Log.i(TAG, "Stop Here");
             }
         }
     }
+
     private void initRecyclerView() {
         recyclerView = findViewById(R.id.movieDbList);
-        movieGridLayoutManger = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+        movieGridLayoutManger = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(movieGridLayoutManger);
         adapter = new MovieAdapter(R.layout.movie_list_item, getApplicationContext());
         recyclerView.setAdapter(adapter);
     }
+
     private void initViewModel() {
         final Observer<List<MinMovie>> moviesObserver =
                 new Observer<List<MinMovie>>() {
@@ -170,6 +170,6 @@ public class MainActivity extends AppCompatActivity {
                 };
         mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         mViewModel.getCurrentMovies().observe(this, moviesObserver);
-        mViewModel.getFavoriteMovies().observe(this,favoriteMoviesObserver);
+        mViewModel.getFavoriteMovies().observe(this, favoriteMoviesObserver);
     }
 }

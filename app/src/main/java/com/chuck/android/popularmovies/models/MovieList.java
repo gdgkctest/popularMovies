@@ -1,8 +1,9 @@
 package com.chuck.android.popularmovies.models;
 
-import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 
 public class MovieList {
@@ -20,7 +21,6 @@ public class MovieList {
     @Expose
     //Array of Movie Class
     private List<Movie> results;
-
 
 
     public MovieList(Integer page, Integer totalResults, Integer totalPages, List<Movie> results) {

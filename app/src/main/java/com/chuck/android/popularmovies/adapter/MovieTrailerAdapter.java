@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.chuck.android.popularmovies.MovieDetails;
 import com.chuck.android.popularmovies.R;
-import com.chuck.android.popularmovies.models.MovieReview;
 import com.chuck.android.popularmovies.models.MovieTrailer;
 import com.squareup.picasso.Picasso;
 
@@ -33,21 +30,24 @@ public class MovieTrailerAdapter extends RecyclerView.Adapter<MovieTrailerAdapte
 
         LinearLayout moviesLayout;
         ImageView videoPoster;
-        TextView movieLink;
+        TextView movieLinkDescription;
         private Context context;
 
-        MovieTrailerViewHolder(Context context,View v) {
+        MovieTrailerViewHolder(Context context, View v) {
             super(v);
             //Define Viewholder
             moviesLayout = v.findViewById(R.id.trailers_layout);
             videoPoster = v.findViewById(R.id.video_poster);
-            movieLink = v.findViewById(R.id.video_link);
+            movieLinkDescription = v.findViewById(R.id.video_link);
             this.context = context;
             v.setOnClickListener(this);
         }
+
         @Override
         public void onClick(View view) {
+            //check if there is a populated trailer object
             if (moviesTrailers != null) {
+                //Links trailer object to web or youtube(if installed)
                 int position = getAdapterPosition();
                 String youTubeShortCode = moviesTrailers.get(position).getKey();
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://youtu.be/" + youTubeShortCode));
@@ -55,11 +55,13 @@ public class MovieTrailerAdapter extends RecyclerView.Adapter<MovieTrailerAdapte
             }
         }
     }
+
     @NonNull
     @Override
     public MovieTrailerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_trailer_list_item, parent, false);
-        return new MovieTrailerViewHolder(parent.getContext(),view);    }
+        return new MovieTrailerViewHolder(parent.getContext(), view);
+    }
 
     @Override
     public void onBindViewHolder(@NonNull MovieTrailerViewHolder holder, int position) {
@@ -67,12 +69,12 @@ public class MovieTrailerAdapter extends RecyclerView.Adapter<MovieTrailerAdapte
         //holder.movieLink movieTrailers.getkey;
 
         if (moviesTrailers != null) {
+            //Get youtube id
             String youTubeShortCode = moviesTrailers.get(position).getKey();
             String trailerName = moviesTrailers.get(position).getName();
-            String link = "https://youtu.be/" + youTubeShortCode;
-            holder.movieLink.setText(link);
-            Linkify.addLinks(holder.movieLink, Linkify.WEB_URLS);
-
+            //Set trailer description
+            holder.movieLinkDescription.setText(trailerName);
+            //Create trailer thumbnail image
             String posterPath = "https://img.youtube.com/vi/" + youTubeShortCode + "/mqdefault.jpg";
             Picasso.get()
                     .load(posterPath)
@@ -84,13 +86,14 @@ public class MovieTrailerAdapter extends RecyclerView.Adapter<MovieTrailerAdapte
         }
 
     }
-    public void setMovies (List < MovieTrailer > currentMovieTrailers) {
+
+    public void setMovies(List<MovieTrailer> currentMovieTrailers) {
         moviesTrailers = currentMovieTrailers;
         notifyDataSetChanged();
     }
 
     @Override
-    public int getItemCount () {
+    public int getItemCount() {
         if (moviesTrailers != null)
             return moviesTrailers.size();
         else

@@ -4,7 +4,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
 @Entity(tableName = "movies")
-
+//Minimum Movie object that only has fields needed for display and storage of favorite
 public class MinMovie {
     @PrimaryKey
     private Integer id;
@@ -12,7 +12,7 @@ public class MinMovie {
     private String posterPath;
 
 
-    public MinMovie(Integer id, String title, String posterPath){
+    public MinMovie(Integer id, String title, String posterPath) {
         this.id = id;
         this.title = title;
         this.posterPath = posterPath;
