@@ -2,6 +2,7 @@ package com.chuck.android.popularmovies;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
@@ -39,10 +40,18 @@ public class MainActivity extends AppCompatActivity {
     private MovieAdapter adapter;
     StaggeredGridLayoutManager movieGridLayoutManger;
     public static final String BUNDLE_RV_POSITION = "Bundle_RV_POS_KEY";
+    public static final String SHARED_PREF_LISTTYPE = "List Type Preference";
+
     private String selectedList;
     private List<MinMovie> currentMoviesList = new ArrayList<>();
     private List<MinMovie> favoriteMovieList;
     private MainViewModel mViewModel;
+
+    public static final String FAVORITESMOVIES = "Favorites";
+    public static final String POPULARMOVIES = "Popular Movies";
+    public static final String TOPRATEDMOVIES = "Top Rated Movies";
+
+    private SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,17 +60,19 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
-        initRecyclerView();
         initViewModel();
+        initRecyclerView();
         Stetho.initializeWithDefaults(this);
+        preferences = getApplicationContext().getSharedPreferences("ListType",0);
 
         if (savedInstanceState != null) {
             Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RV_POSITION);
             recyclerView.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
         }
         //if saved state is null select popular movies
-        else
-            movieListSelect("Popular Movies");
+        else {
+            movieListSelect(POPULARMOVIES);
+        }
 
     }
 
@@ -84,15 +95,19 @@ public class MainActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
+        SharedPreferences.Editor editor = preferences.edit();
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_popular) {
             selectedList = "Popular Movies";
+            editor.putString(SHARED_PREF_LISTTYPE,POPULARMOVIES);
         } else if (id == R.id.action_topRated) {
             selectedList = "Top Rated Movies";
+            editor.putString(SHARED_PREF_LISTTYPE,TOPRATEDMOVIES);
         } else if (id == R.id.action_favorites) {
             selectedList = "Favorites";
+            editor.putString(SHARED_PREF_LISTTYPE,FAVORITESMOVIES);
         }
+        editor.apply();
         movieListSelect(selectedList);
         return super.onOptionsItemSelected(item);
     }
@@ -109,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
         else {
             if ("Favorites".equals(movieList)) {
                 recyclerView.scrollToPosition(0);
-                adapter.setMovies(favoriteMovieList);
+                mViewModel.getCurrentMovies().postValue(favoriteMovieList);
             } else {
                 //Choose a retrofit call based on sort option
                 Call<MovieList> call;
@@ -131,15 +146,12 @@ public class MainActivity extends AppCompatActivity {
                             currentMoviesList.add(new MinMovie(movie.getId(), movie.getTitle(), movie.getPosterPath()));
                         mViewModel.getCurrentMovies().postValue(currentMoviesList);
                     }
-
                     @Override
                     public void onFailure(Call<MovieList> call, Throwable t) {
                         //If not log the Error
                         Log.e(TAG, t.toString());
                     }
                 });
-                if ("Top Rated Movies".equals(movieList))
-                    Log.i(TAG, "Stop Here");
             }
         }
     }
@@ -148,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.movieDbList);
         movieGridLayoutManger = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(movieGridLayoutManger);
-        adapter = new MovieAdapter(R.layout.movie_list_item, getApplicationContext());
+        adapter = new MovieAdapter(getApplicationContext());
         recyclerView.setAdapter(adapter);
     }
 
@@ -165,7 +177,10 @@ public class MainActivity extends AppCompatActivity {
                 new Observer<List<MinMovie>>() {
                     @Override
                     public void onChanged(@Nullable List<MinMovie> movies) {
+                        String movieListType = preferences.getString(SHARED_PREF_LISTTYPE,"");
                         favoriteMovieList = movies;
+                        if (movieListType.equals(FAVORITESMOVIES)) {
+                                mViewModel.getCurrentMovies().postValue(movies); }
                     }
                 };
         mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);

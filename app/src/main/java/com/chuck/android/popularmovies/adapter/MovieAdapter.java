@@ -21,47 +21,43 @@ import java.util.List;
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
     //declare adapter variables
     private List<MinMovie> movies;
-    private int rowLayout;
-    private Context context;
+    private final LayoutInflater mInflater;
+
 
 
     public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         //Declare ViewHolder variables
         LinearLayout moviesLayout;
         ImageView moviePoster;
-        private Context context;
 
-
-        MovieViewHolder(Context context, View v) {
+        MovieViewHolder(View v) {
             super(v);
             //Define Viewholder and set on click listener
             moviesLayout = v.findViewById(R.id.movies_layout);
             moviePoster = v.findViewById(R.id.image_poster);
-            this.context = context;
             v.setOnClickListener(this);
-
         }
 
         @Override
         public void onClick(View view) {
             //If Movie Poster is clicked send the current movies ID to the MovieDetails Activity
             int position = getAdapterPosition();
-            Intent myIntent = new Intent(context, MovieDetails.class);
+            Intent myIntent = new Intent(view.getContext(), MovieDetails.class);
             myIntent.putExtra("EXTRA_MOVIE_ID", movies.get(position).getId());
-            context.startActivity(myIntent);
+            view.getContext().startActivity(myIntent);
         }
     }
 
-    public MovieAdapter(int rowLayout, Context context) {
-        this.rowLayout = rowLayout;
-        this.context = context;
+    public MovieAdapter(Context context) {
+        mInflater = LayoutInflater.from(context);
     }
 
     @NonNull
     @Override
     public MovieViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(rowLayout, parent, false);
-        return new MovieViewHolder(parent.getContext(), view);
+        //View view = LayoutInflater.from(parent.getContext()).inflate(rowLayout, parent, false);
+        View view = mInflater.inflate(R.layout.movie_list_item,parent,false);
+        return new MovieViewHolder(view);
     }
 
 
