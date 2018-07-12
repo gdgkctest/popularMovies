@@ -45,8 +45,8 @@ public class MovieDetails extends AppCompatActivity {
     TextView movieRating;
     TextView movieDescription;
     ImageView moviePoster;
-    private RecyclerView rv_Reviews;
-    private RecyclerView rv_Trailers;
+    private RecyclerView rvReviews;
+    private RecyclerView rvTrailers;
 
     private MovieReviewAdapter reviewAdapter;
     private MovieTrailerAdapter trailerAdapter;
@@ -84,14 +84,14 @@ public class MovieDetails extends AppCompatActivity {
     }
 
     private void initRecylerViews() {
-        rv_Reviews = findViewById(R.id.rv_reviewList);
-        rv_Trailers = findViewById(R.id.rv_trailerList);
-        rv_Reviews.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayout.HORIZONTAL, false));
-        rv_Trailers.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayout.HORIZONTAL, false));
+        rvReviews = findViewById(R.id.rv_reviewList);
+        rvTrailers = findViewById(R.id.rv_trailerList);
+        rvReviews.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayout.HORIZONTAL, false));
+        rvTrailers.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayout.HORIZONTAL, false));
         reviewAdapter = new MovieReviewAdapter();
         trailerAdapter = new MovieTrailerAdapter();
-        rv_Reviews.setAdapter(reviewAdapter);
-        rv_Trailers.setAdapter(trailerAdapter);
+        rvReviews.setAdapter(reviewAdapter);
+        rvTrailers.setAdapter(trailerAdapter);
     }
 
     private void initViewModel(int id) {

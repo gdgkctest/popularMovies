@@ -2,6 +2,7 @@ package com.chuck.android.popularmovies.repo;
 
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
+import android.util.Log;
 
 import com.chuck.android.popularmovies.DB.AppDatabase;
 import com.chuck.android.popularmovies.MainActivity;
@@ -50,7 +51,12 @@ public class AppRepository {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                movDB.movieDao().insertMovie(movie);
+
+                try {
+                    movDB.movieDao().insertMovie(movie);
+                }catch (Exception e){
+                    Log.e(TAG, e.toString());
+                }
             }
         });
     }
@@ -59,7 +65,11 @@ public class AppRepository {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                movDB.movieDao().deleteMovie(movie);
+                try {
+                    movDB.movieDao().deleteMovie(movie);
+            }catch (Exception e){
+                    Log.e(TAG, e.toString());
+                }
             }
         });
     }

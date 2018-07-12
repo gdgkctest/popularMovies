@@ -7,9 +7,11 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private RecyclerView recyclerView;
     private MovieAdapter adapter;
-    StaggeredGridLayoutManager movieGridLayoutManger;
+    GridLayoutManager movieGridLayoutManger;
     public static final String BUNDLE_RV_POSITION = "Bundle_RV_POS_KEY";
     public static final String SHARED_PREF_LISTTYPE = "List Type Preference";
 
@@ -167,10 +169,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initRecyclerView() {
-        movieGridLayoutManger = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        movieGridLayoutManger = new GridLayoutManager(this, numberOfColumns());
         recyclerView.setLayoutManager(movieGridLayoutManger);
         adapter = new MovieAdapter(getApplicationContext());
         recyclerView.setAdapter(adapter);
+    }
+    //Provided by Udacity to calculate number of columns based on width of window
+    private int numberOfColumns() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        // You can change this divider to adjust the size of the poster
+        int widthDivider = 400;
+        int width = displayMetrics.widthPixels;
+        int nColumns = width / widthDivider;
+        if (nColumns < 2) return 2; //to keep the grid aspect
+        return nColumns;
     }
 
     private void initViewModel() {
@@ -191,7 +204,6 @@ public class MainActivity extends AppCompatActivity {
                               //  mViewModel.getCurrentMovies().postValue(movies);
                             adapter.setMovies(movies);
                         }
-
                     }
                 };
         mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
