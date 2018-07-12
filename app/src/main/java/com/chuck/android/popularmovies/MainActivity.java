@@ -51,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
     public static final String POPULARMOVIES = "Popular Movies";
     public static final String TOPRATEDMOVIES = "Top Rated Movies";
 
+    private String movieListType;
+    private Parcelable savedRecyclerLayoutState;
     private SharedPreferences preferences;
 
     @Override
@@ -59,15 +61,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        recyclerView = findViewById(R.id.movieDbList);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
+        preferences = getApplicationContext().getSharedPreferences("ListType",0);
+        movieListType = preferences.getString(SHARED_PREF_LISTTYPE,"");
+
         initViewModel();
         initRecyclerView();
         Stetho.initializeWithDefaults(this);
-        preferences = getApplicationContext().getSharedPreferences("ListType",0);
 
         if (savedInstanceState != null) {
-            Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RV_POSITION);
-            recyclerView.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
+            savedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RV_POSITION);
+     //       if (!movieListType.equals(FAVORITESMOVIES))
+                recyclerView.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
         }
         //if saved state is null select popular movies
         else {
@@ -107,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
             selectedList = "Favorites";
             editor.putString(SHARED_PREF_LISTTYPE,FAVORITESMOVIES);
         }
-        editor.apply();
+        editor.commit();
         movieListSelect(selectedList);
         return super.onOptionsItemSelected(item);
     }
@@ -119,18 +125,19 @@ public class MainActivity extends AppCompatActivity {
         String apiKey = getString(R.string.API_key);
         //Reviewer: Please Enter API Key in secrets.xml for moviedb
         if (apiKey.equals(""))
-            Toast.makeText(this, "Please Enter API Key in Secrets.xml", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.api_error_message, Toast.LENGTH_SHORT).show();
             //Only Run if API key is available
         else {
-            if ("Favorites".equals(movieList)) {
-                recyclerView.scrollToPosition(0);
+            if (FAVORITESMOVIES.equals(movieList)) {
                 mViewModel.getCurrentMovies().postValue(favoriteMovieList);
+                recyclerView.scrollToPosition(0);
+
             } else {
                 //Choose a retrofit call based on sort option
                 Call<MovieList> call;
-                if ("Popular Movies".equals(movieList))
+                if (POPULARMOVIES.equals(movieList))
                     call = movieService.getPopularMovies(apiKey);
-                else if ("Top Rated Movies".equals(movieList))
+                else if (TOPRATEDMOVIES.equals(movieList))
                     call = movieService.getTopRatedMovies(apiKey);
                 else
                     call = movieService.getTopRatedMovies(apiKey);
@@ -145,6 +152,9 @@ public class MainActivity extends AppCompatActivity {
                         for (Movie movie : movies)
                             currentMoviesList.add(new MinMovie(movie.getId(), movie.getTitle(), movie.getPosterPath()));
                         mViewModel.getCurrentMovies().postValue(currentMoviesList);
+                        recyclerView.scrollToPosition(0);
+
+
                     }
                     @Override
                     public void onFailure(Call<MovieList> call, Throwable t) {
@@ -157,7 +167,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initRecyclerView() {
-        recyclerView = findViewById(R.id.movieDbList);
         movieGridLayoutManger = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(movieGridLayoutManger);
         adapter = new MovieAdapter(getApplicationContext());
@@ -169,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
                 new Observer<List<MinMovie>>() {
                     @Override
                     public void onChanged(@Nullable List<MinMovie> movies) {
-                        recyclerView.scrollToPosition(0);
+                        initRecyclerView();
                         adapter.setMovies(movies);
                     }
                 };
@@ -177,10 +186,12 @@ public class MainActivity extends AppCompatActivity {
                 new Observer<List<MinMovie>>() {
                     @Override
                     public void onChanged(@Nullable List<MinMovie> movies) {
-                        String movieListType = preferences.getString(SHARED_PREF_LISTTYPE,"");
                         favoriteMovieList = movies;
                         if (movieListType.equals(FAVORITESMOVIES)) {
-                                mViewModel.getCurrentMovies().postValue(movies); }
+                              //  mViewModel.getCurrentMovies().postValue(movies);
+                            adapter.setMovies(movies);
+                        }
+
                     }
                 };
         mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);

@@ -21,14 +21,14 @@ import java.util.List;
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
     //declare adapter variables
     private List<MinMovie> movies;
-    private final LayoutInflater mInflater;
-
+    private final Context mContext;
 
 
     public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         //Declare ViewHolder variables
         LinearLayout moviesLayout;
         ImageView moviePoster;
+
 
         MovieViewHolder(View v) {
             super(v);
@@ -49,14 +49,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     }
 
     public MovieAdapter(Context context) {
-        mInflater = LayoutInflater.from(context);
+        mContext = context;
     }
 
     @NonNull
     @Override
     public MovieViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        //View view = LayoutInflater.from(parent.getContext()).inflate(rowLayout, parent, false);
-        View view = mInflater.inflate(R.layout.movie_list_item,parent,false);
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        View view = inflater.inflate(R.layout.movie_list_item,parent,false);
         return new MovieViewHolder(view);
     }
 
