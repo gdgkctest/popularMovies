@@ -57,20 +57,22 @@ public class AppRepository {
                 }catch (Exception e){
                     Log.e(TAG, e.toString());
                 }
-            }
+                    movDB.movieDao().insertMovie(movie); }
+
         });
     }
 
     public void deleteFavoriteMovie(final MinMovie movie) {
         executor.execute(new Runnable() {
             @Override
-            public void run() {
+           public void run() {
                 try {
                     movDB.movieDao().deleteMovie(movie);
             }catch (Exception e){
                     Log.e(TAG, e.toString());
                 }
             }
+         //   movDB.movieDao().deleteMovie(movie); }
         });
     }
 

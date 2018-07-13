@@ -9,4 +9,5 @@
     <string name="movie_trailers">Movie Trailers</string>
     <string name="review_label">Reviews</string>
     <string name="api_error_message">Please Enter API Key in Secrets.xml</string>
+    <string name="youtube_error_message">Browser or YouTube not available</string>
 </resources>

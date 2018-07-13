@@ -67,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
         preferences = getApplicationContext().getSharedPreferences("ListType",0);
         movieListType = preferences.getString(SHARED_PREF_LISTTYPE,"");
-
         initViewModel();
         initRecyclerView();
         Stetho.initializeWithDefaults(this);
@@ -75,7 +74,8 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             savedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RV_POSITION);
      //       if (!movieListType.equals(FAVORITESMOVIES))
-                recyclerView.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
+            recyclerView.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
+
         }
         //if saved state is null select popular movies
         else {
@@ -115,7 +115,8 @@ public class MainActivity extends AppCompatActivity {
             selectedList = "Favorites";
             editor.putString(SHARED_PREF_LISTTYPE,FAVORITESMOVIES);
         }
-        editor.commit();
+        editor.apply();
+        movieListType = preferences.getString(SHARED_PREF_LISTTYPE,"");
         movieListSelect(selectedList);
         return super.onOptionsItemSelected(item);
     }

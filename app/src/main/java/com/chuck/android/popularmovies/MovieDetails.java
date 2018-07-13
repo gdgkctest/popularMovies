@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -40,6 +41,7 @@ public class MovieDetails extends AppCompatActivity {
     private DetailsViewModel mViewModel;
     protected Movie movieDetails;
     CheckBox checkbox;
+    ImageButton unlockFavoriteButton;
     TextView movieTitle;
     TextView movieDate;
     TextView movieRating;
@@ -47,6 +49,8 @@ public class MovieDetails extends AppCompatActivity {
     ImageView moviePoster;
     private RecyclerView rvReviews;
     private RecyclerView rvTrailers;
+    private long mLastClickTime = 0;
+
 
     private MovieReviewAdapter reviewAdapter;
     private MovieTrailerAdapter trailerAdapter;
@@ -64,6 +68,7 @@ public class MovieDetails extends AppCompatActivity {
         movieDescription = findViewById(R.id.movieDescription);
         moviePoster = findViewById(R.id.movieDetailsPoster);
         checkbox = findViewById(R.id.ck_favorites);
+        unlockFavoriteButton = findViewById(R.id.unlockCheckboxButton);
 
         retrieveMovieDetails(id);
         initViewModel(id);
@@ -79,6 +84,16 @@ public class MovieDetails extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Movie Removed From Favorites", Toast.LENGTH_SHORT).show();
                     mViewModel.deleteMovie();
                 }
+                checkbox.setEnabled(false);
+                unlockFavoriteButton.setVisibility(View.VISIBLE);
+            }
+        });
+        //Unlocks the favorite button - prevents double clicking
+        unlockFavoriteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checkbox.setEnabled(true);
+                unlockFavoriteButton.setVisibility(View.GONE);
             }
         });
     }
@@ -105,7 +120,6 @@ public class MovieDetails extends AppCompatActivity {
             }
         });
         mViewModel.loadData(id);
-
     }
 
     private void retrieveMovieDetails(int id) {
@@ -136,7 +150,6 @@ public class MovieDetails extends AppCompatActivity {
                 movieRating.setText(Double.toString(movieDetails.getVoteAverage()));
                 movieDescription.setText(movieDetails.getOverview());
             }
-
             @Override
             public void onFailure(Call<Movie> call, Throwable t) {
                 Log.e(TAG, t.toString());
@@ -150,10 +163,8 @@ public class MovieDetails extends AppCompatActivity {
                 List<MovieTrailer> movieTrailerList = response.body().getResults();
                 trailerAdapter.setMovies(movieTrailerList);
             }
-
             @Override
             public void onFailure(Call<MovieTrailerList> call, Throwable t) {
-
             }
         });
         Call<MovieReviewList> callReviewList = movieService.getMovieReviews(id, apiKey);
@@ -164,10 +175,8 @@ public class MovieDetails extends AppCompatActivity {
                 List<MovieReview> movieReviewList = response.body().getResults();
                 reviewAdapter.setMovies(movieReviewList);
             }
-
             @Override
             public void onFailure(Call<MovieReviewList> call, Throwable t) {
-
             }
         });
 

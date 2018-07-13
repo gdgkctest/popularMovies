@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chuck.android.popularmovies.R;
 import com.chuck.android.popularmovies.models.MovieTrailer;
@@ -51,7 +52,13 @@ public class MovieTrailerAdapter extends RecyclerView.Adapter<MovieTrailerAdapte
                 int position = getAdapterPosition();
                 String youTubeShortCode = moviesTrailers.get(position).getKey();
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://youtu.be/" + youTubeShortCode));
-                context.startActivity(intent);
+                if (intent.resolveActivity(context.getPackageManager()) != null) {
+                    context.startActivity(intent);
+                }
+                else
+                {
+                    Toast.makeText(context, context.getString(R.string.youtube_error_message), Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }
